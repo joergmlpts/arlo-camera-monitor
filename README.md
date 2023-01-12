@@ -7,7 +7,7 @@ are shown on the computer.
 
 ## Camera Images
 
-The GUI looks like this for 2 cameras:
+The GUI looks like this for an Arlo installation with two cameras:
 
 ![GUI](/images/gui.png)
 
