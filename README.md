@@ -11,7 +11,7 @@ The GUI looks like this for an Arlo installation with two cameras:
 
 ![GUI](/images/gui.png)
 
-A left-click on a camera images updates it with a snapshot; a right-click shows
+A left-click on a camera image updates it with a snapshot; a right-click shows
 a live video stream. The video stream stops when either the left or the right
 mouse button is clicked.
 
