@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import datetime, io, math, os, queue, sys, threading, tkinter
+import datetime, io, math, os, pickle, queue, sys, threading, tkinter
 from tkinter import simpledialog
 from dataclasses import dataclass
 from urllib.parse import urljoin
@@ -153,6 +153,8 @@ def expire_video_htmls() -> None:
 class ArloCredentials:
 
     def __init__(self, username, password, tfa: str):
+        if username is None:
+            username = self.username_from_session()
         self.result = (None, None, None)
         self.win = tkinter.Tk()
         self.win.title('Arlo Credentials')
@@ -189,13 +191,26 @@ class ArloCredentials:
         self.win.mainloop()
 
     def ok(self):
-        self.result = self.uname_entry.get(), self.pwd_entry.get(), \
+        self.result = self.uname_entry.get().strip(), \
+                      self.pwd_entry.get().strip(), \
                       TFA_SMS_TYPE if self.tfa.get() == 2 else TFA_EMAIL_TYPE
         self.win.destroy()
 
     @property
     def credentials(self):
         return self.result
+
+    # Try to find username in saved session; return username or None.
+    def username_from_session(self):
+        session = os.path.join(BASE_DIRECTORY, 'session.pickle')
+        if os.path.exists(session):
+            with open(session, 'rb') as f:
+                config = pickle.load(f)
+            if config.get('version') == '2':
+                for key in config:
+                    if key != 'version':
+                        return key
+        return None
 
 #
 # An instance of class Camera represents an Arlo camera.
@@ -502,15 +517,7 @@ class TFAgetCode:
         pass
 
 if __name__ == '__main__':
-    import argparse
-
-    '''
-    import logging
-
-    logging.basicConfig(level=logging.DEBUG,
-                  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    _LOGGER = logging.getLogger('pyaarlo')
-    '''
+    import argparse, logging
 
     def tfaCheck(arg: str) -> str:
         if arg.upper() in [TFA_EMAIL_TYPE, TFA_SMS_TYPE]:
@@ -528,6 +535,8 @@ if __name__ == '__main__':
                         "e-mail or text message, supported values "
                         f"'{TFA_EMAIL_TYPE}' and '{TFA_SMS_TYPE}'; "
                         f"default '{TFA_EMAIL_TYPE}'.")
+    parser.add_argument('--debug', '-d', action="store_true",
+                        help='Enable pyaarlo debug messages.')
     args = parser.parse_args()
 
     if args.username is None or args.password is None:
@@ -539,6 +548,11 @@ if __name__ == '__main__':
             # ArloCredentials window closed w/o "ok" click.
             sys.exit(0)
 
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG,
+                 format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        _LOGGER = logging.getLogger('pyaarlo')
+
     ArloWindow(username=args.username, password=args.password,
-               #verbose_debug=True,
+               verbose_debug=args.debug,
                tfa_type=args.tfa)
