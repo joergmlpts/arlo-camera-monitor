@@ -35,7 +35,7 @@ the alert is updated to look like this:
 ![Notification 2](/images/notification2.png)
 
 The updated notification includes a link to the video, which can be played or
-downloaded. It will also be automatically be downloaded to the `Videos/Arlo` directory.
+downloaded. It will also automatically be downloaded to the `Videos/Arlo` directory.
 
 The notifications above were seen on Kubuntu. They look slightly different on other
 systems. On Windows, the second notification does not contain web links. Instead it
