@@ -1,45 +1,45 @@
-# Monitor Arlo Security Cameras, download Videos and get Notifications
+# Monitor Arlo Security Cameras, Download Video and Get Notifications
 
-This tool connects to Arlo cameras and shows their images. It allows to update
+This tool connects to Arlo cameras and displays their images. It allows you to update
 a camera image with a snapshot or a live video stream. It also downloads all
-videos from the Arlo cloud. Notifications for low battery and motion detection
-are shown on the computer.
+video from the Arlo cloud. Low battery and motion detection notifications are
+displayed on the computer.
 
 ## Camera Images
 
-The GUI looks like this for an Arlo installation with two cameras:
+The GUI looks like this for a two-camera Arlo installation:
 
 ![GUI](/images/gui.png)
 
-A left-click on a camera image updates it with a snapshot; a right-click shows
-a live video stream. The video stream stops when either the left or the right
+Left-clicking on a camera image updates it with a snapshot; right-clicking displays
+a live video stream. The video stream ends when either the left or the right
 mouse button is clicked.
 
 ## Downloads
 
-All videos in the cloud from up to 30 days ago are downloaded to local
-directory `Videos/Arlo`.
+All videos in the cloud from up to 30 days old will be downloaded to the local
+`Videos/Arlo` directory.
 
 ## Notifications
 
-Notifications are sent when a camera battery is low or when motion is detected
-by any of the cameras. The motion detection notification looks initially like
+Notifications are sent when a camera's battery is low or when motion is detected
+by any of the cameras. The motion detection notification initially looks like
 this:
 
 ![Notification 1](/images/notification1.png)
 
-The initial notification alerts to the time and camera where the motion was
-detected. After a video for that motion event becomes available in the cloud,
-the notification is updated to look like this:
+The initial notification alerts tlert notifies you the time and camera where the motion was
+detected. After video for that motion event becomes available in the cloud,
+the alert is updated to look like this:
 
 ![Notification 2](/images/notification2.png)
 
-The updated notification contains a link to the video; it can be played or
-downloaded. It will also automatically be downloaded to directory `Videos/Arlo`.
+The updated notification includes a link to the video, which can be played or
+downloaded. It will also be automatically be downloaded to the `Videos/Arlo` directory.
 
-The above notifications were seen on Kubuntu. They look slightly different on other
-systems. On Windows, the second notification does not include web links. It
-lists the file name of the video instead.
+The notifications above were seen on Kubuntu. They look slightly different on other
+systems. On Windows, the second notification does not contain web links. Instead it
+lists the filename of the video.
 
 ## Usage
 
@@ -61,7 +61,7 @@ All these parameters are optional. A GUI dialog opens when they are not given.
 
 ## Dependencies
 
-This code needs Python 3.7 or later. It relies on package
+This code needs Python 3.7 or later. It relies on the package
 [pyaarlo](https://github.com/twrecked/pyaarlo) to communicate with the
 Arlo cloud.
 
