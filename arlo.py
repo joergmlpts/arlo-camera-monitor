@@ -321,7 +321,7 @@ class Camera:
             video_time = video.created_at / 1000
             new_motion_notices = []
             for time, notification in self.motion_notices:
-                if abs(time.timestamp() - video_time) < 5.0:
+                if abs(time.timestamp() - video_time) < 10.0:
                     file_url, file_name = write_video_html(video)
                     if notification_supports_html:
                         notification.notification_body += \
