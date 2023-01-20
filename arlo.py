@@ -249,6 +249,7 @@ class Camera:
         self.video_frame_queue = queue.SimpleQueue()
         # Motion detection.
         self.motion_notices = []
+        self.find_motion_scheduled = False
         camera.add_attr_callback(MOTION_DETECTED_KEY, self.motionDetected)
         # Snapshot callback.
         camera.add_attr_callback(LAST_IMAGE_DATA_KEY, self.lastImageData)
@@ -306,8 +307,10 @@ class Camera:
             notification = notify("Motion detected.", "Motion detected on "
                                   f"{time_string} at {self.name}.")
             self.motion_notices.append((now, notification))
-            self.frame.after(self.MEDIA_UPDATE_INTERVAL,
-                             self.findMotionVideos)
+            if not self.find_motion_scheduled:
+                self.find_motion_scheduled = True
+                self.frame.after(self.MEDIA_UPDATE_INTERVAL,
+                                 self.findMotionVideos)
 
     # This function is called after a motion was detected. It waits for the
     # video that shows that motion and extends the notification with a link to
@@ -319,26 +322,37 @@ class Camera:
         now = datetime.datetime.now().timestamp()
         for video in videos:
             video_time = video.created_at / 1000
-            new_motion_notices = []
-            for time, notification in self.motion_notices:
-                if abs(time.timestamp() - video_time) < 10.0:
-                    file_url, file_name = write_video_html(video)
-                    if notification_supports_html:
-                        notification.notification_body += \
-                            f'<br><a href="{file_url}">Play</a> or <a href='\
-                            f'"{video.video_url}" download="{file_name}.mp4">'\
-                             'download</a> video.'
-                    else:
-                        notification.notification_body += '\r\nVideo '\
-                            f"'{file_name}' is available for this motion event."
-                    update_notification(notification)
-                elif now - time.timestamp() < 3600: # give up after an hour
-                    new_motion_notices.append((time, notification))
-            self.motion_notices = new_motion_notices
+            best_idx = -1
+            best_notification = None
+            best_diff = 3600
+            for idx, (time, notification) in enumerate(self.motion_notices):
+                diff = abs(time.timestamp() - video_time)
+                if diff < 10.0 and diff < best_diff:
+                    best_diff = diff
+                    best_notification = notification
+                    best_idx = idx
+            if best_idx >= 0:
+                file_url, file_name = write_video_html(video)
+                if notification_supports_html:
+                    notification.notification_body += \
+                        f'<br><a href="{file_url}">Play</a> or <a href='\
+                        f'"{video.video_url}" download="{file_name}.mp4">'\
+                          'download</a> video.'
+                else:
+                    notification.notification_body += '\r\nVideo '\
+                        f"'{file_name}' is available for this motion event."
+                update_notification(best_notification)
+            self.motion_notices = [(time, notification)
+                                   for idx, (time, notification) in
+                                       enumerate(self.motion_notices)
+                                   if idx != best_idx and
+                                       now - time.timestamp() < 3600]
             if not self.motion_notices:
                 break
         if self.motion_notices: # update videos and try again
             self.frame.after(self.MEDIA_UPDATE_INTERVAL, self.findMotionVideos)
+        else:
+            self.find_motion_scheduled = False
 
     # This function is called when the left or right mouse button is pressed in
     # an image. The left mouse button updates the image with a snapshot; the
