@@ -568,5 +568,5 @@ if __name__ == '__main__':
         _LOGGER = logging.getLogger('pyaarlo')
 
     ArloWindow(username=args.username, password=args.password,
-               verbose_debug=args.debug,
+               verbose_debug=args.debug, mqtt_hostname_check=False,
                tfa_type=args.tfa)
