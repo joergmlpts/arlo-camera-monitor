@@ -28,7 +28,7 @@ this:
 
 ![Notification 1](/images/notification1.png)
 
-The initial notification alerts tlert notifies you the time and camera where the motion was
+The initial notification alerts you mentioning the time and camera where the motion was
 detected. After video for that motion event becomes available in the cloud,
 the alert is updated to look like this:
 
